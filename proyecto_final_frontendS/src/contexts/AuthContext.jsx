@@ -8,11 +8,33 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
+  
+    const findUsername = (data) => {
+        if (!data) return null;
+        return data.username || data.nombre || (data.user && data.user.username) || (data.user && data.user.nombre);
+    };
+
+   
+    const findUserId = (data) => {
+        if (!data) return null;
+        return data.userId || data.id || (data.user && data.user._id) || (data.user && data.user.id) || data._id;
+    };
+
     useEffect(() => {
         const token = localStorage.getItem('jwt');
-        if (token) {
+        const storedUserId = localStorage.getItem('userId');
+        const storedUsername = localStorage.getItem('username');
+
+        if (token && storedUserId) {
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            setUser({ token: token }); 
+            setUser({ 
+                token: token, 
+                id: storedUserId,
+                username: storedUsername 
+            }); 
+        } else {
+            localStorage.clear(); 
+            setUser(null);
         }
         setLoading(false);
     }, []);
@@ -20,9 +42,22 @@ export const AuthProvider = ({ children }) => {
     const login = async (credentials) => {
         try {
             const data = await authService.loginUser(credentials);
-            localStorage.setItem('jwt', data.token);
-            api.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
-            setUser({ token: data.token, id: data.userId }); 
+            
+            const userId = findUserId(data);
+            const username = findUsername(data) || "Gamer"; 
+
+            if (data.token) localStorage.setItem('jwt', data.token);
+            if (userId) localStorage.setItem('userId', userId);
+            if (username) localStorage.setItem('username', username); 
+            
+            if (data.token) api.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+            
+            setUser({ 
+                token: data.token, 
+                id: userId,
+                username: username 
+            }); 
+
             return data;
         } catch (error) {
             console.error("Login failed:", error);
@@ -41,7 +76,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
-        localStorage.removeItem('jwt');
+        localStorage.clear(); 
         delete api.defaults.headers.common['Authorization'];
         setUser(null);
     };
