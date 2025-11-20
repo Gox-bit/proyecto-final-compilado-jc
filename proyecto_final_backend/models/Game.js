@@ -11,9 +11,15 @@ const gameSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+ 
   año: {
     type: Number,
-    required: true
+    required: true 
+  },
+
+  descripcion: {
+    type: String,
+    required: false
   },
   horas: {
     type: Number,
@@ -26,7 +32,6 @@ const gameSchema = new mongoose.Schema({
     required: false,
     default: 'Pendiente',
   },
-
   puntuacionPromedio: {
     type: Number,
     min: 0,
@@ -36,7 +41,9 @@ const gameSchema = new mongoose.Schema({
   numReseñas: {
     type: Number,
     default: 0
-  }
+  },
+
+  img: { type: String },
 }, { 
   timestamps: true 
 });
