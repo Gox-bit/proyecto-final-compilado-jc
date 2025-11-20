@@ -20,7 +20,10 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Por favor, añade una contraseña'],
     minlength: 6,
     select: false // Para que no se devuelva la contraseña en las consultas
-  }
+  },
+  
+  role: { type: String, enum: ['user', 'admin'], default: 'user' } 
+}, { timestamps: true 
 });
 
 userSchema.pre('save', async function(next) {
