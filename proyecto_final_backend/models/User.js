@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Por favor, añade una contraseña'],
     minlength: 6,
-    select: false // Para que no se devuelva la contraseña en las consultas
+    select: false 
   },
   
   role: { type: String, enum: ['user', 'admin'], default: 'user' } 
