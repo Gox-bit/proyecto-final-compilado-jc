@@ -5,6 +5,7 @@ const gameRoutes = require("./routes/games");
 const reviewRoutes = require('./routes/Review');
 const authRoutes = require('./routes/authRoutes');
 const connectDB = require('./config/db');
+const statsRoutes = require('./routes/stats');
 const app = express();
 
 
@@ -36,7 +37,7 @@ app.use(express.json());
 app.use("/api/games", gameRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/auth', authRoutes);
-
+app.use('/api/stats', statsRoutes);
 app.get('/', (req, res) => {
   res.send('Servidor Express funcionando');
 });

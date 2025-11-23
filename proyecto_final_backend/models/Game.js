@@ -12,6 +12,11 @@ const gameSchema = new mongoose.Schema({
     trim: true
   },
  
+totalLogros: 
+{ type: Number,
+  default: 0 
+},
+
   año: {
     type: Number,
     required: true 
