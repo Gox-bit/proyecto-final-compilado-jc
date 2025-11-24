@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { Gamepad2, Menu, X, LogOut, User, LogIn, UserPlus } from 'lucide-react';
+import { Gamepad2, Menu, X, LogOut, User, LogIn, UserPlus, PlusCircle } from 'lucide-react';
 
 function Navbar() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    const location = useLocation(); 
+    const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const handleLogout = () => {
@@ -15,7 +15,15 @@ function Navbar() {
         setIsMenuOpen(false);
     };
 
-   
+    const handleHomeClick = () => {
+        setIsMenuOpen(false); 
+        navigate('/');    
+        window.dispatchEvent(new Event('reset-pagination'));
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    // -------------------------------------
+
     const isActive = (path) => location.pathname === path;
 
     return (
@@ -23,8 +31,7 @@ function Navbar() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     
-                    {}
-                    <Link to="/" className="flex items-center gap-2 group" onClick={() => setIsMenuOpen(false)}>
+                    <Link to="/" className="flex items-center gap-2 group" onClick={handleHomeClick}>
                         <div className="relative">
                             <div className="absolute inset-0 bg-purple-600 blur-lg opacity-0 group-hover:opacity-50 transition-opacity duration-500"></div>
                             <Gamepad2 className="relative h-8 w-8 text-purple-500 group-hover:scale-110 transition-transform duration-300" />
@@ -34,36 +41,44 @@ function Navbar() {
                         </span>
                     </Link>
                     
-                    {}
                     <div className="hidden md:flex items-center gap-6">
                         
-                        {}
                         <Link 
                             to="/" 
+                            onClick={handleHomeClick}
                             className={`relative text-sm font-bold transition-colors duration-300 ${
                                 isActive('/') ? 'text-white' : 'text-gray-400 hover:text-white'
                             }`}
                         >
                             Home
-                            {}
                             {isActive('/') && (
                                 <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-purple-500 rounded-full shadow-[0_0_8px_rgba(168,85,247,0.8)]"></span>
                             )}
                         </Link>
                         
-                        <div className="h-6 w-px bg-gray-800"></div> {}
+                        <div className="h-6 w-px bg-gray-800"></div>
 
                         {user ? (
-                         
                             <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-3 pl-2 pr-4 py-1.5 rounded-full bg-gray-900 border border-gray-800 group hover:border-purple-500/50 transition-colors">
+                           
+                                {user.role === 'admin' && (
+                                    <Link 
+                                        to="/admin/create-game" 
+                                        className="flex items-center gap-2 px-3 py-1.5 bg-purple-600/20 text-purple-400 border border-purple-600/50 rounded-lg hover:bg-purple-600 hover:text-white transition-all mr-2 text-sm font-bold"
+                                    >
+                                        <PlusCircle size={16} /> 
+                                        <span>Nuevo Juego</span>
+                                    </Link>
+                                )}
+
+                               <Link to="/profile" className="flex items-center gap-3 pl-2 pr-4 py-1.5 rounded-full bg-gray-900 border border-gray-800 group hover:border-purple-500/50 transition-colors cursor-pointer">
                                     <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white font-bold shadow-lg">
                                         {user.username ? user.username.charAt(0).toUpperCase() : <User size={16} />}
                                     </div>
                                     <span className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">
                                         {user.username || "Jugador"}
                                     </span>
-                                </div>
+                                </Link>
 
                                 <button 
                                     onClick={handleLogout} 
@@ -74,9 +89,7 @@ function Navbar() {
                                 </button>
                             </div>
                         ) : (
-                           
                             <div className="flex items-center gap-3">
-                                {}
                                 <Link 
                                     to="/login" 
                                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-300 ${
@@ -89,7 +102,6 @@ function Navbar() {
                                     Login
                                 </Link>
 
-                                {}
                                 <Link 
                                     to="/register" 
                                     className="flex items-center gap-2 px-5 py-2 bg-green-600 hover:bg-green-500 text-white text-sm font-bold rounded-lg shadow-lg shadow-green-900/20 hover:shadow-green-500/30 hover:-translate-y-0.5 transition-all duration-300"
@@ -101,7 +113,7 @@ function Navbar() {
                         )}
                     </div>
 
-                    {}
+         
                     <div className="md:hidden flex items-center">
                         <button 
                             onClick={() => setIsMenuOpen(!isMenuOpen)} 
@@ -113,21 +125,32 @@ function Navbar() {
                 </div>
             </div>
 
-            {}
-            {}
-            <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'}`}>
+       
+            <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'}`}>
                 <div className="bg-gray-900 border-b border-gray-800 px-4 pt-2 pb-6 space-y-3 shadow-xl">
                     
+    
                     <Link 
                         to="/" 
-                        onClick={() => setIsMenuOpen(false)}
+                        onClick={handleHomeClick}
                         className={`block px-4 py-3 rounded-lg font-medium ${isActive('/') ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white'}`}
                     >
                         Home
                     </Link>
 
                     {user ? (
-                        <>
+                        <>  
+                       
+                            {user.role === 'admin' && (
+                                <Link 
+                                    to="/admin/create-game" 
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="flex items-center gap-2 px-4 py-3 bg-purple-600/10 text-purple-400 rounded-lg font-medium border border-purple-600/20 hover:bg-purple-600/20"
+                                >
+                                    <PlusCircle size={18} /> Nuevo Juego
+                                </Link>
+                            )}
+
                             <div className="px-4 py-3 flex items-center gap-3 border-t border-gray-800 mt-2">
                                 <div className="h-8 w-8 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold text-sm">
                                     {user.username ? user.username.charAt(0).toUpperCase() : 'U'}

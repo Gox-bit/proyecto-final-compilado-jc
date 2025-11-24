@@ -33,7 +33,6 @@ function ReviewForm({ gameId, onSubmit, initialReview = null }) {
                 {initialReview ? "Editar tu reseña" : "Comparte tu opinión"}
             </h3>
             
-            {/* Selector de Estrellas Interactivo */}
             <div className="mb-6">
                 <label className="block text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">
                     Calificación

@@ -17,6 +17,13 @@ function RegisterPage() {
         setError(null);
         setSuccess(null);
         setLoading(true);
+        
+        if (password.length < 6) {
+            setError("La contraseña debe tener al menos 6 caracteres.");
+            setLoading(false); 
+            return;
+        }
+
         try {
             await registerUser({ username, email, password });
             setSuccess('¡Cuenta creada con éxito!');
@@ -28,13 +35,15 @@ function RegisterPage() {
         } catch (err) {
             setError(err.response?.data?.message || 'Error al registrarse. Inténtalo de nuevo.');
             console.error("Registration failed:", err);
-            setLoading(false);
+        } finally {
+            if (password.length >= 6) {
+                setLoading(false);
+            }
         }
     };
 
     return (
         <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gray-950 px-4 relative overflow-hidden">
-             {/* Decoración de fondo (variante rosada/azul para diferenciar) */}
              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-600/10 rounded-full blur-3xl -z-10"></div>
 
             <div className="bg-gray-900 border border-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md backdrop-blur-sm">
@@ -48,7 +57,7 @@ function RegisterPage() {
                 </div>
 
                 {error && (
-                    <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg text-sm mb-6 text-center">
+                    <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg text-sm mb-6 text-center animate-pulse">
                         {error}
                     </div>
                 )}
@@ -108,6 +117,7 @@ function RegisterPage() {
                                 required
                             />
                         </div>
+                        <p className="text-xs text-gray-500 mt-1 ml-1">Mínimo 6 caracteres</p>
                     </div>
 
                     <button

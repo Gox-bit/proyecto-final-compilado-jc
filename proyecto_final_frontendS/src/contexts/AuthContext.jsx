@@ -8,33 +8,20 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-  
-    const findUsername = (data) => {
-        if (!data) return null;
-        return data.username || data.nombre || (data.user && data.user.username) || (data.user && data.user.nombre);
-    };
-
-   
-    const findUserId = (data) => {
-        if (!data) return null;
-        return data.userId || data.id || (data.user && data.user._id) || (data.user && data.user.id) || data._id;
-    };
-
     useEffect(() => {
         const token = localStorage.getItem('jwt');
         const storedUserId = localStorage.getItem('userId');
         const storedUsername = localStorage.getItem('username');
+        const storedRole = localStorage.getItem('role');
 
         if (token && storedUserId) {
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             setUser({ 
-                token: token, 
+                token, 
                 id: storedUserId,
-                username: storedUsername 
+                username: storedUsername,
+                role: storedRole
             }); 
-        } else {
-            localStorage.clear(); 
-            setUser(null);
         }
         setLoading(false);
     }, []);
@@ -42,22 +29,21 @@ export const AuthProvider = ({ children }) => {
     const login = async (credentials) => {
         try {
             const data = await authService.loginUser(credentials);
-            
-            const userId = findUserId(data);
-            const username = findUsername(data) || "Gamer"; 
+            const role = data.role || 'user'; 
 
-            if (data.token) localStorage.setItem('jwt', data.token);
-            if (userId) localStorage.setItem('userId', userId);
-            if (username) localStorage.setItem('username', username); 
+            localStorage.setItem('jwt', data.token);
+            localStorage.setItem('userId', data._id || data.userId);
+            localStorage.setItem('username', data.nombre || data.username);
+            localStorage.setItem('role', role);
             
-            if (data.token) api.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+            api.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
             
             setUser({ 
                 token: data.token, 
-                id: userId,
-                username: username 
+                id: data._id || data.userId, 
+                username: data.nombre || data.username,
+                role: role
             }); 
-
             return data;
         } catch (error) {
             console.error("Login failed:", error);
@@ -65,24 +51,14 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (userData) => {
-        try {
-            const data = await authService.registerUser(userData);
-            return data;
-        } catch (error) {
-            console.error("Registration failed:", error);
-            throw error;
-        }
-    };
-
     const logout = () => {
-        localStorage.clear(); 
+        localStorage.clear();
         delete api.defaults.headers.common['Authorization'];
         setUser(null);
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+        <AuthContext.Provider value={{ user, loading, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

@@ -41,6 +41,7 @@ app.use('/api/stats', statsRoutes);
 app.get('/', (req, res) => {
   res.send('Servidor Express funcionando');
 });
+const listsRoutes = require('./routes/lists');
 
 connectDB();
 
@@ -49,4 +50,5 @@ app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
 });
 
+app.use('/api/lists', listsRoutes);
 module.exports = app;

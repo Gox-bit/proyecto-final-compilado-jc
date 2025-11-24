@@ -1,5 +1,3 @@
-// src/utils/gameImages.js
-
 export const GAME_COVERS = {
     "Crash Bandicoot": "https://image.api.playstation.com/cdn/UP0002/CUSA07402_00/03ZtrPdjasIxzi8QrzOb2zCIHLMydFbh.png",
     "Fortnite": "https://i.ytimg.com/vi/adGdyCdvKz4/maxresdefault.jpg",
